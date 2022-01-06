@@ -2,11 +2,16 @@ public class Hatebook {
 
   public static void main(String[] args) {
     {
-      // comprovar paraula marejada i bipolar
-      System.out.println(new ParaulaMarejada("hello"));
-      final ParaulaBipolar paraula = new ParaulaBipolar("test", 50);
+      // comprovar paraules
+      final Paraula paraula = new Paraula("normal");
+      final Paraula bipolar = new ParaulaBipolar("bipolar", 30);
+      final Paraula marejada = new ParaulaMarejada("marejada");
+      final Paraula grollera = new ParaulaGrollera("dolenta", 66);
+
+      System.out.println(paraula);
+      System.out.println(marejada);
       for (int i = 0; i < 10; i++) {
-        System.out.println(i + ": " + paraula);
+        System.out.println(i + ": " + bipolar + " | " + grollera);
       }
     }
 

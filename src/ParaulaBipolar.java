@@ -13,7 +13,7 @@ public class ParaulaBipolar extends Paraula {
 
   @Override
   public String contingut() {
-    if (random.nextInt(100) >= possibilitat) {
+    if (random.nextInt(100) < possibilitat) {
       return "";
     }
 

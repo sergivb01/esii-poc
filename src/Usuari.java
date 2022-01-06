@@ -15,7 +15,7 @@ public class Usuari {
 
   public void canviarRelacioUsuari(final Usuari usuari, final TipusRelacio tipus) {
     if (tipus == TipusRelacio.RES) {
-      // si ja no tenen cap relació, el treiem del mapa per estalviar espai amb buits...
+      // si ja no tenen cap relació amb l'usuari, el podem treure per no emmagatzemar "buits"
       relacions.remove(usuari);
       return;
     }
