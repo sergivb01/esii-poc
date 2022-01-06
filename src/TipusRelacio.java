@@ -10,7 +10,9 @@ public enum TipusRelacio {
     this.tipus = tipus;
   }
 
-  public String tipus() {
-    return this.tipus;
+  @Override
+  public String toString() {
+    return tipus;
   }
+
 }
