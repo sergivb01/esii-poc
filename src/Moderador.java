@@ -6,9 +6,4 @@ public class Moderador extends Usuari {
   }
 
 
-  @Override
-  public String toString() {
-    return "Moderador{" + "@" + nomUsuari() + " (" + nom() + ", " + cognoms() + ")";
-  }
-
 }

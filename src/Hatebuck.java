@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Hatebuck {
 
@@ -17,15 +18,16 @@ public class Hatebuck {
     final String nomFitxerRelacions = args[1];
 
     List<Usuari> usuaris = new LinkedList<>();
-    List<Moderador> moderadors = new LinkedList<>();
-    llegirUsuaris(nomFitxerUsuaris, usuaris, moderadors);
+    llegirUsuaris(nomFitxerUsuaris, usuaris);
+    llegirRelacions(nomFitxerRelacions, usuaris);
 
-    final LinkedList<Usuari> tots = new LinkedList<>(usuaris);
-    tots.addAll(moderadors);
-    llegirRelacions(nomFitxerRelacions, tots);
+    List<Moderador> moderadors = usuaris.stream()
+        .filter(Moderador.class::isInstance)
+        .map(Moderador.class::cast)
+        .collect(Collectors.toList());
 
-    System.out.println(usuaris);
-    System.out.println(moderadors);
+    System.out.println("Usuaris: " + usuaris);
+    System.out.println("Moderadors: " + moderadors);
 
     {
       // comprovar paraules
@@ -40,13 +42,9 @@ public class Hatebuck {
         System.out.println(i + ": " + bipolar + " | " + grollera);
       }
     }
-
-    for (Usuari usu : tots) {
-      System.out.println(usu);
-    }
   }
 
-  private static void llegirUsuaris(String filename, List<Usuari> usuaris, List<Moderador> moderadors) throws IOException {
+  private static void llegirUsuaris(String filename, List<Usuari> usuaris) throws IOException {
     try (final BufferedReader br = Files.newBufferedReader(Paths.get(filename))) {
       br.readLine(); // ens saltem el header
 
@@ -58,11 +56,13 @@ public class Hatebuck {
         final String cognoms = args[2];
         final String rawNoderador = args[3];
 
-        if (rawNoderador.equalsIgnoreCase("no")) {
-          usuaris.add(new Usuari(nomUsuari, nom, cognoms));
+        Usuari usuari;
+        if (rawNoderador.equalsIgnoreCase("si")) {
+          usuari = new Moderador(nomUsuari, nom, cognoms);
         } else {
-          moderadors.add(new Moderador(nomUsuari, nom, cognoms));
+          usuari = new Usuari(nomUsuari, nom, cognoms);
         }
+        usuaris.add(usuari);
       }
     }
   }
