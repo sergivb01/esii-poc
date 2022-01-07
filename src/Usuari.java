@@ -3,13 +3,15 @@ import java.util.Map;
 
 public class Usuari {
 
+  private final String nomUsuari;
   private final String nom;
-  private final String cognom;
+  private final String cognoms;
   private final Map<Usuari, TipusRelacio> relacions;
 
-  public Usuari(String nom, String cognom) {
+  public Usuari(String nomUsuari, String nom, String cognoms) {
+    this.nomUsuari = nomUsuari;
     this.nom = nom;
-    this.cognom = cognom;
+    this.cognoms = cognoms;
     this.relacions = new LinkedHashMap<>();
   }
 
@@ -27,11 +29,20 @@ public class Usuari {
     return relacions.getOrDefault(usuari, TipusRelacio.RES);
   }
 
+  public String nomUsuari() {
+    return this.nomUsuari;
+  }
+
   public String nom() {
     return this.nom;
   }
 
-  public String cognom() {
-    return this.cognom;
+  public String cognoms() {
+    return this.cognoms;
+  }
+
+  @Override
+  public String toString() {
+    return "Usuari{" + "@" + nomUsuari() + " (" + nom() + ", " + cognoms() + ")";
   }
 }

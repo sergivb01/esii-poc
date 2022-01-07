@@ -1,7 +1,14 @@
 // el moderador pot crear/modificar/eliminar publicacions d'altres usuaris
 public class Moderador extends Usuari {
 
-  public Moderador(String nom, String cognom) {
-    super(nom, cognom);
+  public Moderador(String nomUsuari, String nom, String cognoms) {
+    super(nomUsuari, nom, cognoms);
   }
+
+
+  @Override
+  public String toString() {
+    return "Moderador{" + "@" + nomUsuari() + " (" + nom() + ", " + cognoms() + ")";
+  }
+
 }
