@@ -6,6 +6,7 @@ public class MissatgePrivat {
   private final Usuari destinatari;
   private final List<Paraula> paraules;
 
+  private String prova;
 
   public MissatgePrivat(Usuari remitent, Usuari destinatari, List<Paraula> paraules) {
     this.remitent = remitent;
