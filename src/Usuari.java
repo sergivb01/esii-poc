@@ -1,5 +1,6 @@
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class Usuari {
 
@@ -43,6 +44,16 @@ public class Usuari {
 
   @Override
   public String toString() {
-    return "Usuari{" + "@" + nomUsuari() + " (" + nom() + ", " + cognoms() + ")";
+    String prefix = "";
+    final StringBuilder sb = new StringBuilder();
+    for (Entry<Usuari, TipusRelacio> entry : relacions.entrySet()) {
+      sb.append(prefix);
+      prefix = ",";
+      sb.append(entry.getKey().nomUsuari)
+          .append("=")
+          .append(entry.getValue());
+    }
+
+    return "Usuari{" + "@" + nomUsuari() + " (" + nom() + ", " + cognoms() + ", relacions={" + sb + "})";
   }
 }

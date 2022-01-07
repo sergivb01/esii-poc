@@ -16,7 +16,7 @@ public class ParaulaGrollera extends Paraula {
   public String contingut() {
     if (random.nextInt(100) < possibilitat) {
       // retornem una paraula aleatoria de la llista de grolleres
-      final int index = random.nextInt(PARAULES_GROLLERES.length - 1);
+      final int index = random.nextInt(PARAULES_GROLLERES.length);
       return PARAULES_GROLLERES[index];
     }
 
@@ -28,8 +28,7 @@ public class ParaulaGrollera extends Paraula {
         "beneit",
         "collons",
         "hostia",
-        "nap",
-        ""
+        "nap"
     };
   }
 
