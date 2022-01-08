@@ -1,7 +1,7 @@
 // paraula normal
 public class Paraula {
 
-  protected String paraula;
+  protected final String paraula;
 
   public Paraula(String paraula) {
     this.paraula = paraula;

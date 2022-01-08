@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Hatebuck {
@@ -29,19 +30,34 @@ public class Hatebuck {
     System.out.println("Usuaris: " + usuaris);
     System.out.println("Moderadors: " + moderadors);
 
-    {
-      // comprovar paraules
-      final Paraula paraula = new Paraula("normal");
-      final Paraula bipolar = new ParaulaBipolar("bipolar", 30);
-      final Paraula marejada = new ParaulaMarejada("marejada");
-      final Paraula grollera = new ParaulaGrollera("dolenta", 66);
-
-      System.out.println(paraula);
-      System.out.println(marejada);
-      for (int i = 0; i < 10; i++) {
-        System.out.println(i + ": " + bipolar + " | " + grollera);
+    final Scanner scan = new Scanner(System.in);
+    mostrarMenu();
+    int opcio = scan.nextInt();
+    while (opcio != 0) {
+      switch (opcio) {
+        case 1:
+        case 2:
+        case 3:
+          System.out.println("No implementat");
+          break;
+        default:
+          System.out.println("Opció incorrecta.");
+          break;
       }
+
+      mostrarMenu();
+      opcio = scan.nextInt();
     }
+  }
+
+  private static void mostrarMenu() {
+    System.out.println("=".repeat(25));
+    System.out.println("Menú principal:");
+    System.out.println("[0] Sortir");
+    System.out.println("[1] Enviar missatge privat");
+    System.out.println("[2] Modificar publicació");
+    System.out.println("[3] Establir nova relació");
+    System.out.println("=".repeat(25));
   }
 
   private static void llegirUsuaris(String filename, List<Usuari> usuaris) throws IOException {
@@ -54,10 +70,10 @@ public class Hatebuck {
         final String nomUsuari = args[0];
         final String nom = args[1];
         final String cognoms = args[2];
-        final String rawNoderador = args[3];
+        final String moderador = args[3];
 
         Usuari usuari;
-        if (rawNoderador.equalsIgnoreCase("si")) {
+        if (moderador.equalsIgnoreCase("si")) {
           usuari = new Moderador(nomUsuari, nom, cognoms);
         } else {
           usuari = new Usuari(nomUsuari, nom, cognoms);
@@ -89,7 +105,7 @@ public class Hatebuck {
         return usuari;
       }
     }
-    throw new IllegalArgumentException("L'usuari amb nomusuari '" + nom + "' no existeix");
+    throw new IllegalArgumentException("L'usuari amb nom usuari '" + nom + "' no existeix");
   }
 
 
