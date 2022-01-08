@@ -23,7 +23,7 @@ public class Publicacio {
         return sb.toString();
     }
 
-    public void nou_contingut(List<Paraula> paraules) {
+    public void nouContingut(List<Paraula> paraules) {
         this.paraules = paraules;
     }
 

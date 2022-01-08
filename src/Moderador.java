@@ -7,8 +7,8 @@ public class Moderador extends Usuari {
     super(nomUsuari, nom, cognoms);
   }
 
-  public void modificar_publicacio(Publicacio publicacio, List<Paraula> paraules) {
-    publicacio.nou_contingut(paraules);
+  public void modificarPublicacio(Publicacio publicacio, List<Paraula> paraules) {
+    publicacio.nouContingut(paraules);
   }
 
 }
