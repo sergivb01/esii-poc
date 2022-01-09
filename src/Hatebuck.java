@@ -4,10 +4,25 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.function.Function;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Hatebuck {
+
+  /**
+   * TODO:
+   *  * crear mètode (amb generics, com propro) per seleccionar un Usuari d'una llista
+   *  * implementar interficie enviar missatge privat
+   *  * implementar interficie modificar publicació
+   *  * implementar interfície crear nova relació
+   */
+  private static final Pattern PATTERN_WORDS = Pattern.compile("(\\w+)?(\\W+)?"); // match paraula i no-paraula
+  private static final int[] PERCENTATGES = new int[]{25, 33, 50, 66, 75};
 
   public static void main(String[] args) throws IOException {
     if (args.length != 2) {
@@ -31,6 +46,7 @@ public class Hatebuck {
     System.out.println("Moderadors: " + moderadors);
 
     final Scanner scan = new Scanner(System.in);
+
     mostrarMenu();
     int opcio = scan.nextInt();
     while (opcio != 0) {
@@ -97,6 +113,50 @@ public class Hatebuck {
         usuari1.canviarRelacioUsuari(usuari2, tipusRelacio);
       }
     }
+  }
+
+  /**
+   * Crea una cadena de diferents tipus aleatoris de {@link Paraula}
+   *
+   * @return una {@link List} de tipus aleatoris
+   * @throws IllegalArgumentException si la línia està buida
+   */
+  private static List<Paraula> llegirParaules(final String linia) {
+    if (linia.trim().isEmpty()) {
+      throw new IllegalArgumentException("El text no pot estar buit");
+    }
+
+    final Random rand = new Random();
+    final int percentatge = PERCENTATGES[rand.nextInt(PERCENTATGES.length)];
+
+    // llista de funcions com a alternativa a https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html
+    // amb paràmetres
+    final List<Function<String, Paraula>> providers = List.of(
+        Paraula::new,
+        (text) -> new ParaulaBipolar(text, percentatge),
+        (text) -> new ParaulaGrollera(text, percentatge),
+        ParaulaMarejada::new
+    );
+
+    List<Paraula> resultat = new LinkedList<>();
+
+    final Stream<MatchResult> results = PATTERN_WORDS.matcher(linia).results();
+    results.forEach(matchResult -> {
+      final String text = matchResult.group(1);
+      final String separadors = matchResult.group(2);
+
+      if (text != null) {
+        final Function<String, Paraula> providerTipusParaula = providers.get(rand.nextInt(providers.size()));
+        final Paraula paraula = providerTipusParaula.apply(text);
+        resultat.add(paraula);
+      }
+
+      if (separadors != null) { // pot ser que no hi hagi separador al final
+        resultat.add(new Paraula(separadors));
+      }
+    });
+
+    return resultat;
   }
 
   private static Usuari obtenirUsuari(final List<Usuari> usuaris, final String nom) {
