@@ -36,9 +36,10 @@ public class Usuari {
   /**
    * Envia un missatge privat a un {@link Usuari}
    *
+   * @return el {@link MissatgePrivat} enviat
    * @throws IllegalArgumentException si aquest Usuari no pot enviar missatges privats a {@code destinatari}
    */
-  public void enviarMissatgePrivat(final Usuari destinatari, final List<Paraula> paraules) {
+  public MissatgePrivat enviarMissatgePrivat(final Usuari destinatari, final List<Paraula> paraules) {
     // TODO: comprovar si es pot enviar missatge, llençar excepció
     if (false) {
       throw new IllegalArgumentException(nom() + " no pot enviar missatges privats a " + destinatari.nom());
@@ -48,6 +49,8 @@ public class Usuari {
 
     missatgePrivats.add(missatge);
     destinatari.missatgePrivats.add(missatge);
+
+    return missatge;
   }
 
   /**

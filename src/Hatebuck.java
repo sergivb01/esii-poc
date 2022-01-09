@@ -49,9 +49,30 @@ public class Hatebuck {
 
     mostrarMenu();
     int opcio = scan.nextInt();
+    scan.nextLine();
     while (opcio != 0) {
       switch (opcio) {
-        case 1:
+        case 1: {
+          System.out.println("Escull l'usuari que vols ser:");
+          final Usuari usuari = seleccionar(scan, usuaris);
+
+          final LinkedList<Usuari> usuaris2 = new LinkedList<>(usuaris);
+          usuaris2.remove(usuari);
+
+          System.out.println("Escull a qui li vols enviar un missatge:");
+          final Usuari destinatari = seleccionar(scan, usuaris2);
+
+          System.out.println("Entra el missatge a enviar:");
+
+          final String text = scan.nextLine();
+          final List<Paraula> paraules = convertirParaules(text);
+
+          // TODO: mirar si es vol enviar notificacio, etc?
+
+          final MissatgePrivat missatgePrivat = usuari.enviarMissatgePrivat(destinatari, paraules);
+          System.out.println("Missatge \"" + missatgePrivat.contingut() + "\" enviat a " + destinatari);
+          break;
+        }
         case 2:
         case 3:
           System.out.println("No implementat");
@@ -63,6 +84,7 @@ public class Hatebuck {
 
       mostrarMenu();
       opcio = scan.nextInt();
+      scan.nextLine();
     }
   }
 
@@ -121,7 +143,7 @@ public class Hatebuck {
    * @return una {@link List} de tipus aleatoris
    * @throws IllegalArgumentException si la línia està buida
    */
-  private static List<Paraula> llegirParaules(final String linia) {
+  private static List<Paraula> convertirParaules(final String linia) {
     if (linia.trim().isEmpty()) {
       throw new IllegalArgumentException("El text no pot estar buit");
     }
@@ -157,6 +179,32 @@ public class Hatebuck {
     });
 
     return resultat;
+  }
+
+  public static <T> T seleccionar(final Scanner scan, final List<T> opcions) {
+    if (opcions.size() == 1) {
+      final T eleccio = opcions.get(0);
+      System.out.println("Seleccionat automaticament l'unica opció: " + eleccio);
+      return eleccio;
+    }
+
+    int i = 1;
+    for (final T opcio : opcions) {
+      System.out.println(" [" + i + "] " + opcio);
+      i++;
+    }
+
+    System.out.println("Escull una opció [1-" + opcions.size() + "]");
+
+    int n = scan.nextInt();
+    scan.nextLine();
+    while (n < 1 || n > opcions.size()) {
+      System.out.println("Nombre invàlid. Entra un nombre entre " + 1 + "-" + opcions.size() + " (ambdós inclosos)");
+      n = scan.nextInt();
+      scan.nextLine();
+    }
+
+    return opcions.get(n - 1);
   }
 
   private static Usuari obtenirUsuari(final List<Usuari> usuaris, final String nom) {
