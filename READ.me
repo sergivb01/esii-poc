@@ -1,0 +1,19 @@
+Per tal d'executar el programari, es necessiten 3 arguments:
+ * Ruta fitxer CSV d'usuaris
+ * Ruta fitxer CSV de relacions
+ * Ruta fitxer CSV de publicacions
+Hi ha un exemple dels fitxers en la entrega.
+
+En la entrada dels diferents tipus de paraules, només s'ha d'entrar per teclat una frase i donar-li
+a *intro*. La detecció de paraules i separadors es fa de forma automàtica amb una expressió regular
+i la tria de tipus de paraula (marejada, bipolar, grollera) es fa de forma automàtica.
+
+El format de cada fitxer és el següent:
+ * Usuaris (es_moderador = {"si", "no"})
+<nom_usuari>;<nom>;<cognoms>;<es_moderador>
+
+ * Relacions (tipusRelacio = {"desconegut", "conegut", "saludat", "amic"})
+<nom_usuari1>;<nom_usuari1>;<tipusRelacio>
+
+ * Publicacions
+<nom_usuari>;<text>
