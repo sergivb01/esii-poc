@@ -38,8 +38,10 @@ public class Hatebuck {
         .map(Moderador.class::cast)
         .collect(Collectors.toList());
 
-    System.out.println("Usuaris: " + usuaris);
-    System.out.println("Moderadors: " + moderadors);
+    System.out.println("=".repeat(25) + "\nDades inicials\n" + "=".repeat(25));
+    for (final Usuari usuari : usuaris) {
+      System.out.println(" * " + usuari);
+    }
 
     final Scanner scan = new Scanner(System.in);
 
