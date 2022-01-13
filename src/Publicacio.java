@@ -27,4 +27,12 @@ public class Publicacio {
         this.paraules = paraules;
     }
 
+    @Override
+    public String toString() {
+        return "Publicacio{" +
+            "propietari=" + propietari.nomUsuari() +
+            ", visibilitat=" + visibilitat +
+            ", paraules=" + paraules +
+            '}';
+    }
 }

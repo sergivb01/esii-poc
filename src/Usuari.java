@@ -1,3 +1,4 @@
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +12,7 @@ public class Usuari {
 
   private final Map<Usuari, TipusRelacio> relacions;
   private final List<MissatgePrivat> missatgePrivats;
+  private final List<Publicacio> publicacions;
 
   public Usuari(String nomUsuari, String nom, String cognoms) {
     this.nomUsuari = nomUsuari;
@@ -18,6 +20,7 @@ public class Usuari {
     this.cognoms = cognoms;
     this.relacions = new LinkedHashMap<>();
     this.missatgePrivats = new LinkedList<>();
+    this.publicacions = new LinkedList<>();
   }
 
   /**
@@ -40,7 +43,6 @@ public class Usuari {
    * @throws IllegalArgumentException si aquest Usuari no pot enviar missatges privats a {@code destinatari}
    */
   public MissatgePrivat enviarMissatgePrivat(final Usuari destinatari, final List<Paraula> paraules) {
-    // TODO: comprovar si es pot enviar missatge, llençar excepció
     if (false) {
       throw new IllegalArgumentException(nom() + " no pot enviar missatges privats a " + destinatari.nom());
     }
@@ -53,6 +55,12 @@ public class Usuari {
     return missatge;
   }
 
+  public void afegirPublicacio(final TipusRelacio visibilitat, final List<Paraula> paraules) {
+    final Publicacio publicacio = new Publicacio(this, visibilitat, paraules);
+
+    publicacions.add(publicacio);
+  }
+
   /**
    * @return el {@link TipusRelacio} que es té amb {@code usuari}, {@link TipusRelacio#RES} si no tenen cap relació
    */
@@ -61,7 +69,7 @@ public class Usuari {
   }
 
   public List<MissatgePrivat> missatgePrivats() {
-    return this.missatgePrivats;
+    return Collections.unmodifiableList(this.missatgePrivats);
   }
 
   public String nomUsuari() {
@@ -70,6 +78,10 @@ public class Usuari {
 
   public String nom() {
     return this.nom;
+  }
+
+  public List<Publicacio> publicacions() {
+    return Collections.unmodifiableList(this.publicacions);
   }
 
   public String cognoms() {
@@ -88,6 +100,7 @@ public class Usuari {
           .append(entry.getValue());
     }
 
-    return "Usuari{" + "@" + nomUsuari() + " (" + nom() + ", " + cognoms() + ", relacions={" + sb + "})";
+    return "Usuari{" + "@" + nomUsuari() + " (" + nom() + ", " + cognoms() + ", relacions={" + sb + "}, publicacions={"
+        + publicacions + "})";
   }
 }

@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -14,30 +15,25 @@ import java.util.stream.Stream;
 
 public class Hatebuck {
 
-  /**
-   * TODO:
-   *  * crear mètode (amb generics, com propro) per seleccionar un Usuari d'una llista
-   *  * implementar interficie enviar missatge privat
-   *  * implementar interficie modificar publicació
-   *  * implementar interfície crear nova relació
-   */
   private static final Pattern PATTERN_WORDS = Pattern.compile("(\\w+)?(\\W+)?"); // match paraula i no-paraula
   private static final int[] PERCENTATGES = new int[]{25, 33, 50, 66, 75};
 
   public static void main(String[] args) throws IOException {
-    if (args.length != 2) {
-      System.out.println("Us: java Hatebuck /path/to/usuaris.csv /path/to/relacions.csv");
+    if (args.length != 3) {
+      System.out.println("Us: java Hatebuck /path/to/usuaris.csv /path/to/relacions.csv /path/to/publicacions.csv");
       return;
     }
 
     final String nomFitxerUsuaris = args[0];
     final String nomFitxerRelacions = args[1];
+    final String nomFitxerPublicacions = args[2];
 
-    List<Usuari> usuaris = new LinkedList<>();
+    final List<Usuari> usuaris = new LinkedList<>();
     llegirUsuaris(nomFitxerUsuaris, usuaris);
     llegirRelacions(nomFitxerRelacions, usuaris);
+    llegirPublicacions(nomFitxerPublicacions, usuaris);
 
-    List<Moderador> moderadors = usuaris.stream()
+    final List<Moderador> moderadors = usuaris.stream()
         .filter(Moderador.class::isInstance)
         .map(Moderador.class::cast)
         .collect(Collectors.toList());
@@ -67,16 +63,63 @@ public class Hatebuck {
           final String text = scan.nextLine();
           final List<Paraula> paraules = convertirParaules(text);
 
-          // TODO: mirar si es vol enviar notificacio, etc?
+          System.out.println("Vols enviar notificacio? [si/no]");
+          final String enviarNoti = scan.nextLine();
 
           final MissatgePrivat missatgePrivat = usuari.enviarMissatgePrivat(destinatari, paraules);
           System.out.println("Missatge \"" + missatgePrivat.contingut() + "\" enviat a " + destinatari);
+          if (enviarNoti.equalsIgnoreCase("si")) {
+            System.out.println("[" + destinatari.nomUsuari() + "] Has rebut un nou missatge de " + usuari.nomUsuari());
+          }
           break;
         }
-        case 2:
-        case 3:
-          System.out.println("No implementat");
+        case 2: {
+          System.out.println("Escull el moderador que vols ser:");
+
+          final Moderador moderador = seleccionar(scan, moderadors);
+
+          System.out.println("Escull l'usuari de qui vols modificar una publicació:");
+          final List<Usuari> usuarisAmbPublicacions = usuaris.stream()
+              .filter(usuari -> !usuari.publicacions().isEmpty())
+              .collect(Collectors.toList());
+
+          final Usuari usuari = seleccionar(scan, usuarisAmbPublicacions);
+          final List<Publicacio> publicacionsUsuari = usuari.publicacions();
+
+          System.out.println("Escull la publicació que vols modificar:");
+          final Publicacio publicacio = seleccionar(scan, publicacionsUsuari);
+          final String original = publicacio.contingut();
+
+          System.out.println("Entra el nou missatge: ");
+          final String text = scan.nextLine();
+
+          final List<Paraula> paraules = convertirParaules(text);
+          moderador.modificarPublicacio(publicacio, paraules);
+
+          System.out.println(
+              "Publicacio de l'usuari " + usuari.nomUsuari() + " modificada: '" + original + "' a '" + publicacio.contingut()
+                  + "'");
+
           break;
+        }
+        case 3: {
+          System.out.println("Escull l'usuari que vols ser:");
+          final Usuari usuari1 = seleccionar(scan, usuaris);
+
+          System.out.println("Escull l'usuari amb qui vols establir o actualitzar una nova relació:");
+
+          final LinkedList<Usuari> usuaris2 = new LinkedList<>(usuaris);
+          usuaris2.remove(usuari1);
+          final Usuari usuari2 = seleccionar(scan, usuaris2);
+
+          System.out.println("Escull el tipus de relació:");
+          final TipusRelacio relacio = seleccionar(scan, TipusRelacio.values());
+
+          usuari1.canviarRelacioUsuari(usuari2, relacio);
+          System.out.println("Nova/actualitzada relacio amb " + usuari2.nomUsuari() + ": " + usuari1);
+          System.out.println(usuari1.tipusRelacio(usuari2));
+          break;
+        }
         default:
           System.out.println("Opció incorrecta.");
           break;
@@ -104,7 +147,7 @@ public class Hatebuck {
 
       String line;
       while ((line = br.readLine()) != null) {
-        final String[] args = line.split(",");
+        final String[] args = line.split(";");
         final String nomUsuari = args[0];
         final String nom = args[1];
         final String cognoms = args[2];
@@ -127,12 +170,28 @@ public class Hatebuck {
 
       String line;
       while ((line = br.readLine()) != null) {
-        final String[] args = line.split(",");
+        final String[] args = line.split(";");
         final Usuari usuari1 = obtenirUsuari(usuaris, args[0]);
         final Usuari usuari2 = obtenirUsuari(usuaris, args[1]);
         final TipusRelacio tipusRelacio = TipusRelacio.desdeNom(args[2]);
 
         usuari1.canviarRelacioUsuari(usuari2, tipusRelacio);
+      }
+    }
+  }
+
+  private static void llegirPublicacions(String filename, List<Usuari> usuaris) throws IOException {
+    try (final BufferedReader br = Files.newBufferedReader(Paths.get(filename))) {
+      br.readLine(); // ens saltem el header
+
+      String line;
+      while ((line = br.readLine()) != null) {
+        final String[] args = line.split(";");
+        final Usuari usuari = obtenirUsuari(usuaris, args[0]);
+        final String text = args[1];
+
+        final List<Paraula> paraules = convertirParaules(text);
+        usuari.afegirPublicacio(TipusRelacio.AMIC, paraules);
       }
     }
   }
@@ -181,6 +240,10 @@ public class Hatebuck {
     return resultat;
   }
 
+  public static <T> T seleccionar(final Scanner scan, final T[] opcions) {
+    return seleccionar(scan, Arrays.asList(opcions));
+  }
+
   public static <T> T seleccionar(final Scanner scan, final List<T> opcions) {
     if (opcions.size() == 1) {
       final T eleccio = opcions.get(0);
@@ -215,6 +278,5 @@ public class Hatebuck {
     }
     throw new IllegalArgumentException("L'usuari amb nom usuari '" + nom + "' no existeix");
   }
-
 
 }
