@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 public class Hatebuck {
 
-  private static final Pattern PATTERN_WORDS = Pattern.compile("(\\w+)?(\\W+)?"); // match paraula i no-paraula
+  private static final Pattern PATTERN_WORDS = Pattern.compile("(\\s+)?(\\S+)?"); // match paraula i no-paraula
   private static final int[] PERCENTATGES = new int[]{25, 33, 50, 66, 75};
 
   public static void main(String[] args) throws IOException {
